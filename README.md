@@ -17,9 +17,10 @@ Downloads](https://cranlogs.r-pkg.org/badges/grand-total/openai?color=brightgree
 ## Overview
 
 `{openai}` is an R wrapper of OpenAI API endpoints. This package covers
-Models, Completions, Edits, Images, Embeddings, Files, Fine-tunes,
-Moderations, and legacy Engines endpoints. The latter endpoints, namely
-Engines, are left for backward compatibility and will be removed soon.
+Models, Completions, Chat, Edits, Images, Embeddings, Audio, Files,
+Fine-tunes, Moderations, and legacy Engines endpoints. The latter
+endpoints, namely Engines, are left for backward compatibility and will
+be removed soon.
 
 ## Installation
 
@@ -43,9 +44,10 @@ remotes::install_github("irudnyts/openai")
 
 To use the OpenAI API, you need to provide an API key. First, sign up
 for OpenAI API on [this page](https://openai.com/api/). Once you signed
-up and logged in, you need to open [this page](https://beta.openai.com),
-click on **Personal**, and select **View API keys** in drop-down menu.
-You can then copy the key by clicking on the green text **Copy**.
+up and logged in, you need to open [this
+page](https://platform.openai.com), click on **Personal**, and select
+**View API keys** in drop-down menu. You can then copy the key by
+clicking on the green text **Copy**.
 
 By default, functions of `{openai}` will look for `OPENAI_API_KEY`
 environment variable. If you want to set a global environment variable,
@@ -132,3 +134,68 @@ create_image("An astronaut riding a horse in a photorealistic style")
 ```
 
 <img src="man/figures/astronaut.png" width="256px" style="display: block; margin: auto;" />
+
+It is also possible to use ChatGPT’s `gpt-3.5-turbo` model via
+`create_chat_completion()`:
+
+``` r
+create_chat_completion(
+    messages = list(
+        list(
+            "role" = "system",
+            "content" = "You are a helpful assistant."
+        ),
+        list(
+            "role" = "user",
+            "content" = "Who won the world series in 2020?"
+        ),
+        list(
+            "role" = "assistant",
+            "content" = "The Los Angeles Dodgers won the World Series in 2020."
+        ),
+        list(
+            "role" = "user",
+            "content" = "Where was it played?"
+        )
+    )
+)
+#> $id
+#> [1] "chatcmpl-6r7N6YXcMhg8xmVM4ohOcAmzPOy3f"
+#> 
+#> $object
+#> [1] "chat.completion"
+#> 
+#> $created
+#> [1] 1678117740
+#> 
+#> $model
+#> [1] "gpt-3.5-turbo-0301"
+#> 
+#> $usage
+#> $usage$prompt_tokens
+#> [1] 56
+#> 
+#> $usage$completion_tokens
+#> [1] 19
+#> 
+#> $usage$total_tokens
+#> [1] 75
+#> 
+#> 
+#> $choices
+#> finish_reason index message.role
+#> 1          stop     0    assistant
+#> message.content
+#> 1 The 2020 World Series was played at Globe Life Field in Arlington, Texas.
+```
+
+Finally, the speech-to-text
+[Whisper](https://openai.com/research/whisper) is available via
+`create_transcription()` and `create_translation()`:
+
+``` r
+voice_sample_ua <- system.file("extdata", "sample-ua.m4a", package = "openai")
+create_translation(file = voice_sample_ua)
+#> $text
+#> [1] "I want to check how this model works"
+```
